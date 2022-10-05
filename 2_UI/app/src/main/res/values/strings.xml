@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="lab1">Lab1</string>
+    <string name="lab2">Lab2</string>
+    <string name="lab3">Lab3</string>
+    <string name="lab4">Lab4</string>
+    <string name="lab5">Lab5</string>
+    <string name="lab6">Lab6</string>
+    <string name="lab7">Lab7</string>
+    <string name="lab8">Lab8</string>
+</resources>
