@@ -90,3 +90,5 @@ lint/tmp/
 
 **/build
 *.pdf
+
+*.DS_Store

@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/textview_border.xml" value="0.1325" />
         <entry key="app/src/main/res/layout/activity_lab1.xml" value="0.2056159420289855" />
         <entry key="app/src/main/res/layout/activity_lab2.xml" value="0.2056159420289855" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2056159420289855" />
