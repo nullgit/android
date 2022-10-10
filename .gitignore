@@ -89,6 +89,7 @@ lint/tmp/
 
 
 **/build
-*.pdf
-
+pdf
+other
 *.DS_Store
+.vscode

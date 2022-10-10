@@ -1,14 +1,16 @@
-package com.yunzen.myapplication;
+package com.yunzen.myapplication.lab1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class Lab2Activity extends AppCompatActivity {
+import com.yunzen.myapplication.R;
+
+public class Lab1Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lab2);
+        setContentView(R.layout.activity_lab1);
     }
 }
