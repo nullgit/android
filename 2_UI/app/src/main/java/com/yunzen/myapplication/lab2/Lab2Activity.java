@@ -2,7 +2,7 @@ package com.yunzen.myapplication.lab2;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 import com.yunzen.myapplication.R;
 
@@ -32,7 +32,7 @@ public class Lab2Activity extends AppCompatActivity {
         // 设置分割线
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         // 数据
-        List<String> dataList = Stream.iterate(0, i -> i + 1).limit(100).map(i -> "这是item" + i).collect(Collectors.toList());
+        List<String> dataList = IntStream.range(0, 100).mapToObj(i -> "这是item" + i).collect(Collectors.toList());
         // 设置回调
         ActivityResultLauncher<Intent> register = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             result -> {

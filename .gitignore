@@ -92,4 +92,5 @@ lint/tmp/
 pdf
 other
 *.DS_Store
-.vscode
+**/.vscode
+**/.idea
