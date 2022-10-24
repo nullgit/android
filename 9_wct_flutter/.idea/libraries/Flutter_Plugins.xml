@@ -1,6 +1,9 @@
 <component name="libraryTable">
   <library name="Flutter Plugins" type="FlutterPluginsLibraryType">
-    <CLASSES />
+    <CLASSES>
+      <root url="file://$USER_HOME$/opt/flutter/.pub-cache/hosted/pub.flutter-io.cn/volc_engine_rtc-3.44.1" />
+      <root url="file://$USER_HOME$/opt/flutter/.pub-cache/hosted/pub.flutter-io.cn/permission_handler-8.3.0" />
+    </CLASSES>
     <JAVADOC />
     <SOURCES />
   </library>

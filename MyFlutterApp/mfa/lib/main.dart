@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(
-    
-      const Center(
-    child: Text("你好！"),
-  )
+void main() => runApp(const MyApp());
 
-  );
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: "标题",
+      home: Scaffold(
+        appBar: AppBar(title: Text("aaa")),
+      )
+    );
+  }
+
 }
 
 // import 'package:flutter/material.dart';
