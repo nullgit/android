@@ -1,4 +1,4 @@
-package com.yunzen.backend
+package com.yunzen.wct
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

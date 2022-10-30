@@ -1,0 +1,28 @@
+### 测试
+GET http://{{host}}/test/1
+
+
+### 创建用户
+GET http://{{host}}/login/create/user
+
+### 创建房间
+GET http://{{host}}/login/create/room?name=哈哈哈
+
+### token
+GET http://{{host}}/login/token?uid=1&rid=123
+
+
+### chat
+GET http://{{host}}/chat/list?rid=1&time=1767106326
+
+###
+POST http://{{host}}/chat/send
+Content-Type: application/json
+
+{
+  "rid": 123,
+  "uid": 1,
+  "content": "xxx"
+}
+
+###

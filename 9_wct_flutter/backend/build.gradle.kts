@@ -30,6 +30,14 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+    implementation("mysql:mysql-connector-java:8.0.31")
+    implementation("com.baomidou:mybatis-plus-boot-starter:3.5.2")
+    implementation("com.alibaba:druid-spring-boot-starter:1.2.14")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis:2.7.5")
+
+    implementation("com.alibaba.fastjson2:fastjson2:2.0.16")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+
 
 }
 

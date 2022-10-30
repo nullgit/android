@@ -2,7 +2,7 @@
  * Ant Group
  * Copyright (c) 2004-2022 All Rights Reserved.
  */
-package com.yunzen.backend.util;
+package com.yunzen.wct.util;
 
 /**
  * @author fanque
@@ -16,7 +16,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Date;
-import java.util.zip.CRC32;
 
 public class Utils {
     public static final long HMAC_SHA256_LENGTH = 32;

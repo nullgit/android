@@ -2,7 +2,7 @@
  * Ant Group
  * Copyright (c) 2004-2022 All Rights Reserved.
  */
-package com.yunzen.backend.model;
+package com.yunzen.wct.model;
 
 
 import java.nio.ByteBuffer;
