@@ -74,7 +74,7 @@ class _RoomController extends GetxController {
       //   return;
       // }
       // 已经有了当前用户的view
-      if (users.any((element) => element.uid == streamKey.uid)) {
+      if (users.any((element) => element?.uid == streamKey.uid)) {
         return;
       }
 
