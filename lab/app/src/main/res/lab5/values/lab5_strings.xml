@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="btn_take_a_photo">系统相机拍照</string>
+    <string name="btn_record_a_video">系统相机录制</string>
+    <string name="btn_custom_camera">自定义相机</string>
+    <string name="take_a_photo">拍照</string>
+    <string name="take_a_photo_to_path">拍照(指定路径)</string>
+    <string name="record_a_video">录制</string>
+</resources>

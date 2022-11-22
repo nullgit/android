@@ -34,6 +34,7 @@ android {
                     'src/main/res/lab2',
                     'src/main/res/lab3',
                     'src/main/res/lab4',
+                    'src/main/res/lab5',
                     'src/main/res'
             ]
         }

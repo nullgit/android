@@ -1,27 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+
+import '../util/provider.dart';
+import '../util/resp.dart';
+import '../util/constant.dart';
 
 class HomePage extends StatelessWidget {
-  final _HomeController controller = Get.put(_HomeController());
-  final TmpProvider tmpProvider = TmpProvider();
+  final HomeController controller = Get.put(HomeController());
+  final LoginProvider loginProvider = LoginProvider();
+
+  HomePage({super.key});
+
+  // _checkUid() {
+  //   SharedPreferences.getInstance().then((sp) {
+  //     int? uid = sp.getInt("uid");
+  //     if (uid == null) {
+  //       loginProvider.createUser().then((r) {
+  //         uid = r.body?[C.respData];
+  //         sp.setInt(C.uid, uid!);
+  //       });
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
+    // _checkUid();
+
     return Scaffold(
         appBar: AppBar(title: const Text("加入房间")),
         body: Column(children: [
           Obx(() => Text("${controller._intent}")),
           ElevatedButton(
-              onPressed: () => controller.changeIntent(_Intent.create),
+              onPressed: () => controller.changeIntent(Intent.create),
               child: const Text("create")),
           ElevatedButton(
-              onPressed: () => controller.changeIntent(_Intent.join),
+              onPressed: () => controller.changeIntent(Intent.join),
               child: const Text("join")),
           ElevatedButton(
             onPressed: () {
-              tmpProvider.getTest().then((value) {
-                var string = value.bodyString;
-                debugPrint(string);
+              loginProvider.getToken(1, 123).then((value) {
+                String token = value.body?["respData"];
+                debugPrint(token);
               });
             },
             child: const Text("btn"),
@@ -35,22 +56,13 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class TmpProvider extends GetConnect {
-  // Get request
-  Future<Response<String>> getTest() => get("http://192.168.43.35:10000/test/1");
-  // Post request
-  // Future<Response> postUser(Map data) => post("http://youapi/users", data);
-}
+class HomeController extends GetxController {
+  final _intent = Intent.join.obs;
 
-class _HomeController extends GetxController {
-  final _intent = _Intent.join.obs;
-
-  _HomeController() {}
-
-  void changeIntent(_Intent intent) {
+  void changeIntent(Intent intent) {
     _intent.value = intent;
     debugPrint(_intent.toString());
   }
 }
 
-enum _Intent { join, create }
+enum Intent { join, create }

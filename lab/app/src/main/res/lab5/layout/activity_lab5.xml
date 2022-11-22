@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".lab5.Lab5Activity"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/photo_btn"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:text="@string/btn_take_a_photo" />
+
+    <Button
+        android:id="@+id/video_btn"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:text="@string/btn_record_a_video" />
+
+    <Button
+        android:id="@+id/camera_btn"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:text="@string/btn_custom_camera" />
+
+</LinearLayout>

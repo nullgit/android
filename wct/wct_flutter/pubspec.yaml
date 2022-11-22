@@ -38,6 +38,7 @@ dependencies:
   get: ^4.6.5
   volc_engine_rtc: ^3.44.1
   permission_handler: ^8.1.6
+#  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:
