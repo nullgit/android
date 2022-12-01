@@ -39,6 +39,10 @@ dependencies:
   volc_engine_rtc: ^3.44.1
   permission_handler: ^8.1.6
 #  shared_preferences: ^2.0.15
+  logger: ^1.1.0
+  get_storage:
+  camera:
+  auto_orientation: ^2.2.1
 
 dev_dependencies:
   flutter_test:

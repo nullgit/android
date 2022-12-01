@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service
 
 @Service("userService")
 class UserService : ServiceImpl<UserMapper, UserEntity>() {
-    fun create() : Long? {
+    fun create() : UserEntity {
         val userEntity = UserEntity(name = "球迷" + RandomStringUtils.randomAlphabetic(6))
         baseMapper.insert(userEntity)
-        return userEntity.uid
+        return userEntity
     }
 }

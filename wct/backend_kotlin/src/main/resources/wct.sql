@@ -1,3 +1,8 @@
+CREATE DATABASE `wct`
+    DEFAULT CHARACTER SET = 'utf8mb4';
+
+USE `wct`;
+
 CREATE TABLE `wct`.`user`  (
     `uid` bigint PRIMARY KEY AUTO_INCREMENT COMMENT '用户id',
     `name` varchar(128) NOT NULL COMMENT '用户昵称',

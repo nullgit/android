@@ -26,8 +26,9 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
+    // compileOnly("org.projectlombok:lombok")
+    // annotationProcessor("org.projectlombok:lombok")
+    implementation("io.github.microutils:kotlin-logging:1.8.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     implementation("mysql:mysql-connector-java:8.0.31")
@@ -37,8 +38,6 @@ dependencies {
 
     implementation("com.alibaba.fastjson2:fastjson2:2.0.16")
     implementation("org.apache.commons:commons-lang3:3.12.0")
-
-
 }
 
 tasks.withType<KotlinCompile> {
