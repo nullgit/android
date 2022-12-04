@@ -1,22 +1,28 @@
-import 'package:auto_orientation/auto_orientation.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:video_player/video_player.dart';
 import 'package:volc_engine_rtc/volc_engine_rtc.dart';
 import 'package:wct/home/home.dart';
 import 'package:wct/room/live_view.dart';
 
 import '../util/constant.dart';
 import '../util/databus.dart';
+import '../util/provider.dart';
+import '../util/util.dart';
 
 var logger = Logger();
 
 class RoomPage extends StatelessWidget {
   final controller = Get.put(_RoomController());
-  final iconSize = 40.0;
+  final iconSize = 30.0;
   final iconTextScaleFactor = 1.0;
+  final pageIdx = 0.obs;
+  final subPageIdx = 0.obs;
 
   RoomPage({super.key});
 
@@ -27,152 +33,289 @@ class RoomPage extends StatelessWidget {
     // AutoOrientation.landscapeAutoMode();
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size(context.width, 30.0),
-        child: AppBar(
-          title: Text('房间号：${MemoryStorage.rid} 房间名：${MemoryStorage.roomName}'),
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 24,
-            ),
-            onPressed: () {
-              Get.offAll(() {
-                logger.d('返回主页面！');
-                controller._hangUp();
-                return HomePage();
-              });
-            },
-          ),
-        ),
-      ),
-
-      body: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: context.width * 0.6,
-              child: Expanded(
-                child: Column(
+        appBar: buildAppBar(context),
+        body: Obx(() {
+          return pageIdx.value == 0
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    controller._buildLocalRenderView(),
-                    Flex(direction: Axis.horizontal,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                      Column(
-                        children: [
-                          IconButton(
-                            iconSize: iconSize,
-                            icon: Obx(() =>
-                                Icon(controller._openVideo.value
-                                    ? Icons.video_call_outlined
-                                    : Icons.video_call_rounded)),
-                            onPressed: () => controller._switchOpenVideo(),
-                          ),
-                          Obx(() =>
-                              Text(
-                                  controller._openVideo.value ? '关闭视频' : '打开视频',
-                                  textScaleFactor: iconTextScaleFactor)),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          IconButton(
-                            iconSize: iconSize,
-                            icon: Obx(() =>
-                                Icon(controller._openAudio.value
-                                    ? Icons.keyboard_voice_rounded
-                                    : Icons.keyboard_voice_outlined)),
-                            onPressed: () => controller._switchOpenAudio(),
-                          ),
-                          Obx(() =>
-                              Text(
-                                  controller._openAudio.value ? '关闭音频' : '打开音频',
-                                  textScaleFactor: iconTextScaleFactor)),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          IconButton(
-                            iconSize: iconSize,
-                            icon: Obx(() =>
-                                Icon(controller._isSpeakerphone.value
-                                    ? Icons.volume_up_rounded
-                                    : Icons.volume_up_outlined)),
-                            onPressed: () => controller._switchAudioRoute(),
-                          ),
-                          Obx(() =>
-                              Text(
-                                  controller._isSpeakerphone.value ? '使用听筒' : '使用扬声器',
-                                  textScaleFactor: iconTextScaleFactor)),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          IconButton(
-                            iconSize: iconSize,
-                            icon: Obx(() =>
-                                Icon(controller._cameraIdx.value == 0
-                                    ? Icons.camera_alt_rounded
-                                    : Icons.camera_alt_outlined)),
-                            onPressed: () => controller._switchCamera(),
-                          ),
-                          Obx(() =>
-                              Text(
-                                  controller._cameraIdx.value == 0
-                                      ? '换成前摄'
-                                      : '换成后摄',
-                                  textScaleFactor: iconTextScaleFactor)),
-                        ],
-                      ),
-                    ],),
-                    Expanded(child:
-                    ListView(
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              controller.users.add(null);
-                            },
-                            child: const Text('一个按钮更改信息')),
-                      ],
-                    ),
-                    ),
-
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              width: context.width * 0.4,
-              child: Expanded(
-                  child: Column(
-                    children: [
                       SizedBox(
-                        width: context.width * 0.4,
-                        height: context.height * 0.8,
-                        child: Obx(
-                              () =>
-                              ListView.builder(
-                                  itemCount: controller.users.length,
-                                  itemBuilder: (ctx, idx) {
-                                    return controller._buildRemoteRenderView(
-                                        idx);
-                                  }),
+                        width: context.width * 0.7,
+                        child: Expanded(
+                          child: Column(
+                            children: [
+                              Obx(() => SizedBox(
+                                  // width: context.width * 0.5,
+                                  height: context.height * 0.6,
+                                  child: controller._buildVideoPlayerView())),
+                              Flex(
+                                direction: Axis.horizontal,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Column(
+                                    children: [
+                                      IconButton(
+                                        iconSize: iconSize,
+                                        icon: Obx(() => Icon(
+                                            controller._openVideo.value
+                                                ? Icons.video_call_outlined
+                                                : Icons.video_call_rounded)),
+                                        onPressed: () =>
+                                            controller._switchOpenVideo(),
+                                      ),
+                                      Obx(() => Text(
+                                          controller._openVideo.value
+                                              ? '关闭视频'
+                                              : '打开视频',
+                                          textScaleFactor:
+                                              iconTextScaleFactor)),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      IconButton(
+                                        iconSize: iconSize,
+                                        icon: Obx(() => Icon(controller
+                                                ._openAudio.value
+                                            ? Icons.keyboard_voice_rounded
+                                            : Icons.keyboard_voice_outlined)),
+                                        onPressed: () =>
+                                            controller._switchOpenAudio(),
+                                      ),
+                                      Obx(() => Text(
+                                          controller._openAudio.value
+                                              ? '关闭音频'
+                                              : '打开音频',
+                                          textScaleFactor:
+                                              iconTextScaleFactor)),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      IconButton(
+                                        iconSize: iconSize,
+                                        icon: Obx(() => Icon(
+                                            controller._isSpeakerphone.value
+                                                ? Icons.volume_up_rounded
+                                                : Icons.volume_up_outlined)),
+                                        onPressed: () =>
+                                            controller._switchAudioRoute(),
+                                      ),
+                                      Obx(() => Text(
+                                          controller._isSpeakerphone.value
+                                              ? '使用听筒'
+                                              : '使用扬声器',
+                                          textScaleFactor:
+                                              iconTextScaleFactor)),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      IconButton(
+                                        iconSize: iconSize,
+                                        icon: Obx(() => Icon(
+                                            controller._cameraIdx.value == 0
+                                                ? Icons.camera_alt_rounded
+                                                : Icons.camera_alt_outlined)),
+                                        onPressed: () =>
+                                            controller._switchCamera(),
+                                      ),
+                                      Obx(() => Text(
+                                          controller._cameraIdx.value == 0
+                                              ? '换成前摄'
+                                              : '换成后摄',
+                                          textScaleFactor:
+                                              iconTextScaleFactor)),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      IconButton(
+                                          iconSize: iconSize,
+                                          icon: const Icon(
+                                              Icons.open_in_browser_rounded),
+                                          onPressed: () {
+                                            SystemChrome.setEnabledSystemUIMode(
+                                                SystemUiMode.manual,
+                                                overlays: []);
+                                            controller._enableScreenShare();
+                                          }),
+                                      const Text('本地共享'),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      IconButton(
+                                        iconSize: iconSize,
+                                        icon: const Icon(
+                                            Icons.screenshot_monitor_rounded),
+                                        onPressed: () {
+                                          pageIdx.value = 1;
+                                          SystemChrome.setEnabledSystemUIMode(
+                                              SystemUiMode.manual,
+                                              overlays: []);
+                                          // Get.to(FullPage(controller._localRenderContext.value));
+                                        },
+                                      ),
+                                      const Text('全屏'),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              // ElevatedButton(
+                              //     onPressed: () {}, child: const Text('aa')),
+                            ],
+                          ),
                         ),
                       ),
-                      Obx(
-                            () =>
-                            Text(
-                                '实时在线人数：${(controller.users.length + 1).toString()}'),
+                      SizedBox(
+                        width: context.width * 0.3,
+                        child: Expanded(
+                            child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                ElevatedButton(
+                                    onPressed: () {
+                                      subPageIdx.value = 0;
+                                    },
+                                    child: const Text('视频')),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      subPageIdx.value = 1;
+                                    },
+                                    child: const Text('聊天')),
+                              ],
+                            ),
+                            SizedBox(
+                              width: context.width * 0.3,
+                              height: context.height * 0.65,
+                              child: Obx(
+                                () => subPageIdx.value == 0
+                                    ? ListView.builder(
+                                        itemCount: controller.users.length,
+                                        itemBuilder: (ctx, idx) {
+                                          return controller
+                                              ._buildRemoteRenderView(idx);
+                                        })
+                                    : buildChatList(context),
+                              ),
+                            ),
+                            Obx(
+                              () => Text(
+                                  '实时在线人数：${(controller.users.length + 1).toString()}'),
+                            ),
+                          ],
+                        )),
                       ),
-                    ],
-                  )),
-            ),
-          ]),
-      // 本地视频窗口+远端视频窗口
+                    ])
+              : buildFullScreen(context);
+        })
+
+        // 本地视频窗口+远端视频窗口
+        );
+  }
+
+  final FocusNode _roomIDFocusNode = FocusNode();
+  final TextEditingController _roomIdTextController =
+      TextEditingController(text: '');
+  final Provider provider = Provider();
+
+  Widget buildChatList(BuildContext context) {
+    return Column(
+      children: [
+        Obx(
+          () => SizedBox(
+            height: context.height * 0.35,
+            // child: ListView(
+            //   children: [Text('1')],
+            // ),
+            child: ListView.builder(
+                itemCount: controller.chatList.length,
+                itemBuilder: (ctx, idx) {
+                  var chatVO = controller.chatList[idx];
+                  return Text('${chatVO.uid} : ${chatVO.content}');
+                }),
+          ),
+        ),
+        TextField(
+          focusNode: _roomIDFocusNode,
+          controller: _roomIdTextController,
+          decoration: const InputDecoration(
+              labelText: '发出一句聊天吧',
+              floatingLabelStyle: TextStyle(fontSize: 14),
+              labelStyle: TextStyle(fontSize: 12)),
+        ),
+        ElevatedButton(
+            onPressed: () {
+              provider
+                  .sendChat(MemoryStorage.rid, _roomIdTextController.text)
+                  .then((value) {
+                _roomIdTextController.text = '';
+              });
+            },
+            child: const Text('发出聊天')),
+      ],
     );
   }
+
+  PreferredSize buildAppBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: Size(context.width, 30.0),
+      child: AppBar(
+        title: Text('房间号：${MemoryStorage.rid} 房间名：${MemoryStorage.roomName}'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            size: 24,
+          ),
+          onPressed: () {
+            Get.offAll(() {
+              logger.d('返回主页面！');
+              controller._hangUp();
+              return HomePage();
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildFullScreen(BuildContext context) {
+    return Center(
+      child: Row(
+        children: [
+          SizedBox(width: 0.2 * context.width, child: Obx(() => ListView.builder(
+              itemCount: controller.latestChatList.length,
+              itemBuilder: (ctx, idx) {
+                var record = controller.latestChatList[idx];
+                return Text('${record.uid}: ${record.content}');
+              })),),
+          Obx(() => SizedBox(
+              width: context.width * 0.7,
+              height: context.height,
+              child: controller._buildVideoPlayerView())),
+          ElevatedButton(
+              onPressed: () {
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+                    overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+                pageIdx.value = 0;
+              },
+              child: const Text('退出')),
+        ],
+      ),
+    );
+  }
+}
+
+class ChatVO {
+  var id = 0;
+  var uid = 0;
+  var content = '';
+  var time = 0;
 }
 
 class _RoomController extends GetxController {
@@ -184,18 +327,48 @@ class _RoomController extends GetxController {
   var info = 'default'.obs;
 
   RxList<RTCViewContext?> users = <RTCViewContext?>[].obs;
+  RxList<ChatVO> chatList = <ChatVO>[].obs;
+  RxList<ChatVO> latestChatList = <ChatVO>[].obs;
 
   final _videoHandler = RTCVideoEventHandler();
   final _roomHandler = RTCRoomEventHandler();
   final localStorage = GetStorage();
+  final Provider provider = Provider();
 
   Rx<RTCViewContext?> _localRenderContext =
-      RTCViewContext
-          .localContext(uid: '')
-          .obs;
+      RTCViewContext.localContext(uid: '').obs;
+
+  var lastFinished = true;
+
+  late Timer chatListTimer;
+  late Timer latestChatListTimer;
 
   _RoomController() {
     begin();
+    chatListTimer = Timer.periodic(const Duration(seconds: 3), (thisTimer) {
+      int from =
+          chatList.isEmpty ? 0 : (chatList[chatList.length - 1].time + 1);
+      int to = DateTime.now().millisecondsSinceEpoch + 100000000000;
+      logger.d('获取最新聊天消息 from $from to $to');
+      provider.listChat(int.parse(rid), from, to).then((value) {
+        var respData = Util.getRespData(value);
+        for (var e in respData) {
+          var chatVO = ChatVO();
+          chatVO.content = e['content'];
+          chatVO.id = e[C.id];
+          chatVO.uid = e[C.uid];
+          chatVO.time = e['time'];
+          chatList.add(chatVO);
+          latestChatList.add(chatVO);
+          // lastFinished = true;
+        }
+      });
+    });
+
+    latestChatListTimer = Timer.periodic(const Duration(seconds: 10), (thisTimer) {
+      // latestChatList.removeWhere((element) => element.time < DateTime.now().millisecondsSinceEpoch - 5000);
+      latestChatList.clear();
+    });
   }
 
   void begin() {
@@ -289,9 +462,7 @@ class _RoomController extends GetxController {
     _rtcVideo?.setMaxVideoEncoderConfig(solution);
 
     /// 设置本地视频渲染视图
-    _localRenderContext = RTCViewContext
-        .localContext(uid: uid)
-        .obs;
+    _localRenderContext = RTCViewContext.localContext(uid: uid).obs;
 
     /// 设置摄像头
     _cameraIdx.value = localStorage.read(C.cameraIdx);
@@ -319,6 +490,47 @@ class _RoomController extends GetxController {
         isAutoSubscribeVideo: true);
     _rtcRoom?.joinRoom(
         token: MemoryStorage.token, userInfo: userInfo, roomConfig: roomConfig);
+  }
+
+  VideoPlayerController? _videoPlayerController;
+
+  final init = false.obs;
+  final debug = true;
+
+  Widget _buildVideoPlayerView() {
+    // return const Text('debug');
+
+    if (_videoPlayerController == null) {
+      _videoPlayerController = VideoPlayerController.network(
+          'https://tmp-yunzen.oss-cn-shanghai.aliyuncs.com/$rid.mp4');
+      logger.d('视频地址${_videoPlayerController?.dataSource}');
+    }
+
+    if (!init.value) {
+      _videoPlayerController?.initialize().then((_) {
+        logger.d('init 1.mp4');
+        init.value = true;
+        // 确保在初始化视频后显示第一帧，直至在按下播放按钮。
+      });
+    }
+
+    if (_videoPlayerController != null && init.value) {
+      _videoPlayerController?.setLooping(true);
+      var duration = _videoPlayerController?.value.duration;
+      // var from = DateTime.now().millisecondsSinceEpoch / duration.
+      _videoPlayerController?.seekTo(Duration(
+          milliseconds: DateTime.now().millisecondsSinceEpoch %
+              duration!.inMilliseconds));
+      _videoPlayerController?.play();
+      logger.d(
+          '持续$duration, 从${_videoPlayerController?.value.position}开始，循环${_videoPlayerController?.value.isLooping}');
+      return AspectRatio(
+        aspectRatio: _videoPlayerController!.value.aspectRatio,
+        child: VideoPlayer(_videoPlayerController!),
+      );
+    } else {
+      return const Text("没有要播放的视频");
+    }
   }
 
   Widget _buildLocalRenderView() {
@@ -371,7 +583,7 @@ class _RoomController extends GetxController {
   void _refreshAudioRoute() {
     /// 设置使用扬声器/听筒播放音频数据
     AudioRoute audioRoute =
-    _isSpeakerphone.value ? AudioRoute.speakerphone : AudioRoute.earpiece;
+        _isSpeakerphone.value ? AudioRoute.speakerphone : AudioRoute.earpiece;
     _rtcVideo?.setDefaultAudioRoute(audioRoute);
   }
 
@@ -405,6 +617,15 @@ class _RoomController extends GetxController {
     }
   }
 
+  void _enableScreenShare() {
+    logger.d('开始屏幕共享');
+
+    _rtcVideo?.startScreenCapture(ScreenMediaType.videoAndAudio).then((value) {
+      logger.d('屏幕共享回调');
+      _rtcRoom?.publishScreen(MediaStreamType.both);
+    });
+  }
+
   @override
   void onClose() {
     super.onClose();
@@ -415,5 +636,8 @@ class _RoomController extends GetxController {
     /// 离开房间
     logger.d('我离开了房间');
     _rtcRoom?.leaveRoom();
+    chatListTimer.cancel();
+    latestChatListTimer.cancel();
+    _videoPlayerController?.dispose();
   }
 }

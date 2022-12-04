@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
 
   final FocusNode _roomIDFocusNode = FocusNode();
   final TextEditingController _roomIdTextController =
-      TextEditingController(text: '1');
+      TextEditingController(text: '10');
 
   static const double iconSize = 42;
   static const double iconTextScaleFactor = 1.25;
@@ -39,6 +39,7 @@ class HomePage extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size(context.width, 30.0),
         child: AppBar(
+          centerTitle: true,
           title: const Text('加入房间'),
         ),
       ),
@@ -68,7 +69,7 @@ class HomePage extends StatelessWidget {
             Obx(() => Container(
                 margin: const EdgeInsets.all(10.0),
                 child: SizedBox(
-                    width: context.width * 0.7,
+                    width: context.width * 0.5,
                     child: controller._buildLocalRenderView(context)))),
             Flex(
               direction: Axis.vertical,
@@ -143,7 +144,7 @@ class HomePage extends StatelessWidget {
   }
 
   void _checkPermission() async {
-    await [Permission.camera, Permission.microphone].request();
+    await [Permission.camera, Permission.microphone,].request();
   }
 
   final GetStorage localStorage = GetStorage();

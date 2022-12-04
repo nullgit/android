@@ -9,7 +9,6 @@ class BackendApplicationTests {
 
     @Test
     fun contextLoads() {
-        TokenService().token
     }
 
 }

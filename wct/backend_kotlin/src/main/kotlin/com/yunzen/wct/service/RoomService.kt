@@ -22,15 +22,6 @@ class RoomService : ServiceImpl<RoomMapper, RoomEntity>() {
     private lateinit var tokenService: TokenService
 
     /**
-     * 创建一个直播间
-     */
-    fun create(name: String): Long? {
-        val roomEntity = RoomEntity(name = name)
-        baseMapper.insert(roomEntity)
-        return roomEntity.rid
-    }
-
-    /**
      * 进入房间
      */
     fun join(uid: Long, rid: Long): String {

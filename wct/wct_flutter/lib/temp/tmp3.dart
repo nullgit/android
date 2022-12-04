@@ -1,5 +1,10 @@
+import 'dart:async';
+
 void main(List<String> args) {
-  var list = ['1', '2', '3'];
-  var firstWhere = list.firstWhere((element) => element == '3');
-  print(firstWhere);
+  // Timer.periodic(const Duration(seconds: 3), (timer) {
+  //   print('timer');
+  // });
+  var dateTime = DateTime.now().millisecondsSinceEpoch;
+  var duration = Duration(milliseconds: 12000).inMilliseconds;
+  print(dateTime % duration);
 }

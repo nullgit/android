@@ -19,5 +19,7 @@ class TestController {
 }
 
 fun main(args: Array<String>) {
-    Date().time.p()
+    var obj : String? = "1"
+    obj = null;
+    (obj ?: "123").p()
 }

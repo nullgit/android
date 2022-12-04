@@ -24,6 +24,8 @@ class MainApp extends StatelessWidget {
         GetPage(name: "/", page: () => HomePage()),
         GetPage(name: "/home", page: () => HomePage()),
         GetPage(name: "/room", page: () => RoomPage()),
+        // GetPage(name: "/full", page: () => RoomPage()),
+
       ],
       // defaultTransition: Transition.rightToLeft,
     );

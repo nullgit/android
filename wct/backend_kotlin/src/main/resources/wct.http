@@ -13,8 +13,7 @@ GET http://{{host}}/login/token?uid=1&rid=123
 
 
 ### chat
-GET http://{{host}}/chat/list?rid=1&time=1767106326
-
+GET http://{{host}}/chat/list?rid=10&from=0&to=1670082389
 ###
 POST http://{{host}}/chat/send
 Content-Type: application/json

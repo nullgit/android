@@ -8,7 +8,7 @@ import java.util.*
 
 @TableName("chat")
 data class ChatEntity(
-    @TableId(value = "uid", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     var id: Long? = null,
     var rid: Long? = null,
     var uid: Long? = null,

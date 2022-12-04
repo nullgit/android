@@ -43,6 +43,8 @@ dependencies:
   get_storage:
   camera:
   auto_orientation: ^2.2.1
+  video_player:
+
 
 dev_dependencies:
   flutter_test:
