@@ -1,9 +1,10 @@
-import 'package:auto_orientation/auto_orientation.dart';
+import 'dart:typed_data';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -19,21 +20,40 @@ class HomePage extends StatelessWidget {
   final Provider provider = Provider();
 
   final FocusNode _roomIDFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
   final TextEditingController _roomIdTextController =
-      TextEditingController(text: '10');
+      TextEditingController(text: '1');
+  final TextEditingController _passwordTextController =
+      TextEditingController(text: '1');
+  final TextEditingController _nameTextController = TextEditingController();
 
   static const double iconSize = 42;
   static const double iconTextScaleFactor = 1.25;
 
+  final ImagePicker _imagePicker = ImagePicker();
+  final imageFileBytes = Uint8List(0).obs;
+
   HomePage({super.key});
+
+  Widget _buildImage() {
+    return imageFileBytes.value.isEmpty
+        ? const Image(image: AssetImage('images/head.jpeg'))
+        : Image(image: MemoryImage(imageFileBytes.value));
+  }
 
   @override
   Widget build(BuildContext context) {
-    // AutoOrientation.landscapeLeftMode();
-    // AutoOrientation.portraitUpMode();
-
     _checkPermission();
     controller._checkUid();
+
+    List? read = localStorage.read(C.headImage);
+    if (read != null) {
+      var uint8list = Uint8List(read.length);
+      for (int i = 0; i < read.length; ++i) {
+        uint8list[i] = read[i];
+      }
+      imageFileBytes.value = uint8list;
+    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -43,25 +63,77 @@ class HomePage extends StatelessWidget {
           title: const Text('加入房间'),
         ),
       ),
-
       resizeToAvoidBottomInset: false,
       body: ListView(children: [
-        Obx(() => Text(
-              '你好，${controller.userName.value}',
-              style: const TextStyle(fontSize: 24.0),
-            )),
-        Container(
-          key: const Key('房间号输入框'),
-          margin: const EdgeInsets.symmetric(vertical: 20.0),
-          child: TextField(
-            focusNode: _roomIDFocusNode,
-            controller: _roomIdTextController,
-            decoration: const InputDecoration(
-                labelText: '请输入房间号',
-                floatingLabelStyle: TextStyle(fontSize: 24),
-                labelStyle: TextStyle(fontSize: 32)),
-          ),
+        Container(padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(children: [
+            Row(
+              children: [
+                Obx(() => SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: _buildImage(),
+                  // child: Image(image: FileImage(localStorage.read(C.headImage))),
+                )),
+                Obx(() => Text(
+                  '你好，${controller.userName.value}',
+                  style: const TextStyle(fontSize: 24.0),
+                )),
+                TextButton(
+                    onPressed: () async {
+                      final XFile? photo =
+                      await _imagePicker.pickImage(source: ImageSource.gallery);
+                      var bytes = await photo?.readAsBytes();
+                      imageFileBytes.value = bytes!;
+                      logger.d('更换头像');
+                      controller.localStorage.write(C.headImage, bytes);
+                      // MemoryImage(bytes);
+                    },
+                    child: const Text('换头像')),
+                TextButton(
+                  child: const Text('改名'),
+                  onPressed: () {
+                    Get.defaultDialog(
+                      title: '改名',
+                      content: TextField(
+                        controller: _nameTextController,
+                        decoration: const InputDecoration(
+                            floatingLabelStyle: TextStyle(fontSize: 24),
+                            labelStyle: TextStyle(fontSize: 32)),
+                      ),
+                      onConfirm: () {
+                        provider.renameUser(_nameTextController.text).then((value) {
+                          controller.userName.value = _nameTextController.text;
+                          controller.localStorage
+                              .write(C.userName, _nameTextController.text);
+                        });
+                      },
+                      // onCancel: () {},
+                    );
+                  },
+                )
+              ],
+            ),
+            TextField(
+              focusNode: _roomIDFocusNode,
+              controller: _roomIdTextController,
+              decoration: const InputDecoration(
+                  labelText: '请输入房间号',
+                  floatingLabelStyle: TextStyle(fontSize: 24),
+                  labelStyle: TextStyle(fontSize: 32)),
+            ),
+            TextField(
+              focusNode: _passwordFocusNode,
+              controller: _passwordTextController,
+              obscureText: true, // 设置密码不可见
+              decoration: const InputDecoration(
+                  labelText: '请输入密码',
+                  floatingLabelStyle: TextStyle(fontSize: 24),
+                  labelStyle: TextStyle(fontSize: 32)),
+            ),
+          ],),
         ),
+
         Flex(
           direction: Axis.vertical,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,8 +169,8 @@ class HomePage extends StatelessWidget {
                         IconButton(
                           iconSize: iconSize,
                           icon: Obx(() => Icon(controller._openAudio.value
-                              ? Icons.keyboard_voice_rounded
-                              : Icons.keyboard_voice_outlined)),
+                              ? Icons.keyboard_voice_outlined
+                              : Icons.keyboard_voice_rounded)),
                           onPressed: () => controller._switchOpenAudio(),
                         ),
                         Obx(() => Text(
@@ -111,8 +183,8 @@ class HomePage extends StatelessWidget {
                         IconButton(
                           iconSize: iconSize,
                           icon: Obx(() => Icon(controller._cameraIdx.value == 0
-                              ? Icons.camera_alt_rounded
-                              : Icons.camera_alt_outlined)),
+                              ? Icons.camera_alt_outlined
+                              : Icons.camera_alt_rounded)),
                           onPressed: () => controller.switchCamera(),
                         ),
                         Obx(() => Text(
@@ -125,7 +197,7 @@ class HomePage extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 20.0),
                   child: ElevatedButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                         minimumSize: MaterialStatePropertyAll(Size(300, 32)),
                         // EdgeInsets.all(10.0)
                       ),
@@ -144,7 +216,10 @@ class HomePage extends StatelessWidget {
   }
 
   void _checkPermission() async {
-    await [Permission.camera, Permission.microphone,].request();
+    await [
+      Permission.camera,
+      Permission.microphone,
+    ].request();
   }
 
   final GetStorage localStorage = GetStorage();
@@ -162,6 +237,12 @@ class HomePage extends StatelessWidget {
       return;
     }
     _roomIDFocusNode.unfocus();
+    _passwordFocusNode.unfocus();
+
+    if (_roomIdTextController.text != _passwordTextController.text) {
+      Get.snackbar('密码错误', '您输入的不是正确的密码');
+      return;
+    }
 
     logger.d('加入房间$rid');
     MemoryStorage.rid = rid;
@@ -237,19 +318,12 @@ class HomeController extends GetxController {
     if (!init.value || cameraController == null) {
       return _buildContainer();
     } else {
-      logger.d('相机参数：${cameraController?.value.aspectRatio}');
+      // logger.d('相机参数：${cameraController?.value.aspectRatio}');
       return AspectRatio(
-        aspectRatio: 1 / cameraController!.value.aspectRatio,
+        aspectRatio: cameraController!.value.aspectRatio,
         child: CameraPreview(cameraController!),
       );
     }
-  }
-
-  Widget _buildSizedBox(double height, double width) {
-    return SizedBox(
-      height: height,
-      width: width,
-    );
   }
 
   Widget _buildContainer() {

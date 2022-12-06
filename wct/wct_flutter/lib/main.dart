@@ -10,6 +10,7 @@ import './util/databus.dart';
 void main() async {
   await GetStorage.init();
   MemoryStorage.cameras = await availableCameras();
+
   runApp(const MainApp());
 }
 
@@ -24,10 +25,7 @@ class MainApp extends StatelessWidget {
         GetPage(name: "/", page: () => HomePage()),
         GetPage(name: "/home", page: () => HomePage()),
         GetPage(name: "/room", page: () => RoomPage()),
-        // GetPage(name: "/full", page: () => RoomPage()),
-
       ],
-      // defaultTransition: Transition.rightToLeft,
     );
   }
 }

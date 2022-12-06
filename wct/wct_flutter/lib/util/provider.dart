@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
-import 'package:wct/util/constant.dart';
 import 'package:get_storage/get_storage.dart';
-import './constant.dart';
+import 'package:wct/util/constant.dart';
 
 class Provider extends GetConnect {
   final _localStorage = GetStorage();
@@ -18,12 +17,9 @@ class Provider extends GetConnect {
     return get('${C.server}/login/createUser');
   }
 
-  // Future<Response<Map>> createRoom(String roomName) {
-  //   return get('{C.server}/login/create/room?name=$roomName';
-  // }
-
   Future<Response<Map>> joinRoom(int rid) {
-    return get('${C.server}/login/joinRoom?rid=$rid&uid=${_localStorage.read(C.uid)}');
+    return get(
+        '${C.server}/login/joinRoom?rid=$rid&uid=${_localStorage.read(C.uid)}');
   }
 
   Future<Response<Map>> sendChat(int rid, String content) {
@@ -38,6 +34,8 @@ class Provider extends GetConnect {
     return get('${C.server}/chat/list?rid=$rid&from=$from&to=$to');
   }
 
-// Future<Response> postUser(Map data) => post('ttp://youapi/users' data);
+  Future<Response<Map>> renameUser(String name) {
+    return get(
+        '${C.server}/user/rename?uid=${_localStorage.read(C.uid)}&name=$name');
+  }
 }
-

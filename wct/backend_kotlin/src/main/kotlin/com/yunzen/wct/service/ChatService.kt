@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.yunzen.wct.entity.ChatEntity
 import com.yunzen.wct.mapper.ChatMapper
-import org.apache.commons.lang3.compare.ComparableUtils.ge
-import org.apache.commons.lang3.compare.ComparableUtils.le
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
@@ -38,7 +36,7 @@ class ChatService : ServiceImpl<ChatMapper, ChatEntity>() {
      */
     fun list(rid: Long, from: Long, to: Long): List<ChatEntity?> {
         return baseMapper.selectList(QueryWrapper<ChatEntity>().eq(RID, rid).ge(TIME, Date(from)).le(TIME, Date(to)))
-            // .last("limit 10"))
+        // .last("limit 10"))
     }
 
 }

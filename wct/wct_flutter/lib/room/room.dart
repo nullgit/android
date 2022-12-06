@@ -28,12 +28,12 @@ class RoomPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // AutoOrientation.landscapeLeftMode();
     // 旋转屏幕为横屏
     // AutoOrientation.landscapeAutoMode();
 
     return Scaffold(
         appBar: buildAppBar(context),
+        resizeToAvoidBottomInset: false,
         body: Obx(() {
           return pageIdx.value == 0
               ? Row(
@@ -45,9 +45,7 @@ class RoomPage extends StatelessWidget {
                         child: Expanded(
                           child: Column(
                             children: [
-                              Obx(() => SizedBox(
-                                  // width: context.width * 0.5,
-                                  height: context.height * 0.6,
+                              Obx(() => Expanded(
                                   child: controller._buildVideoPlayerView())),
                               Flex(
                                 direction: Axis.horizontal,
@@ -79,8 +77,8 @@ class RoomPage extends StatelessWidget {
                                         iconSize: iconSize,
                                         icon: Obx(() => Icon(controller
                                                 ._openAudio.value
-                                            ? Icons.keyboard_voice_rounded
-                                            : Icons.keyboard_voice_outlined)),
+                                            ? Icons.keyboard_voice_outlined
+                                            : Icons.keyboard_voice_rounded)),
                                         onPressed: () =>
                                             controller._switchOpenAudio(),
                                       ),
@@ -98,8 +96,8 @@ class RoomPage extends StatelessWidget {
                                         iconSize: iconSize,
                                         icon: Obx(() => Icon(
                                             controller._isSpeakerphone.value
-                                                ? Icons.volume_up_rounded
-                                                : Icons.volume_up_outlined)),
+                                                ? Icons.volume_up_outlined
+                                                : Icons.volume_up_rounded)),
                                         onPressed: () =>
                                             controller._switchAudioRoute(),
                                       ),
@@ -117,8 +115,8 @@ class RoomPage extends StatelessWidget {
                                         iconSize: iconSize,
                                         icon: Obx(() => Icon(
                                             controller._cameraIdx.value == 0
-                                                ? Icons.camera_alt_rounded
-                                                : Icons.camera_alt_outlined)),
+                                                ? Icons.camera_alt_outlined
+                                                : Icons.camera_alt_rounded)),
                                         onPressed: () =>
                                             controller._switchCamera(),
                                       ),
@@ -133,21 +131,6 @@ class RoomPage extends StatelessWidget {
                                   Column(
                                     children: [
                                       IconButton(
-                                          iconSize: iconSize,
-                                          icon: const Icon(
-                                              Icons.open_in_browser_rounded),
-                                          onPressed: () {
-                                            SystemChrome.setEnabledSystemUIMode(
-                                                SystemUiMode.manual,
-                                                overlays: []);
-                                            controller._enableScreenShare();
-                                          }),
-                                      const Text('本地共享'),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      IconButton(
                                         iconSize: iconSize,
                                         icon: const Icon(
                                             Icons.screenshot_monitor_rounded),
@@ -156,7 +139,6 @@ class RoomPage extends StatelessWidget {
                                           SystemChrome.setEnabledSystemUIMode(
                                               SystemUiMode.manual,
                                               overlays: []);
-                                          // Get.to(FullPage(controller._localRenderContext.value));
                                         },
                                       ),
                                       const Text('全屏'),
@@ -164,8 +146,6 @@ class RoomPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              // ElevatedButton(
-                              //     onPressed: () {}, child: const Text('aa')),
                             ],
                           ),
                         ),
@@ -177,21 +157,21 @@ class RoomPage extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                ElevatedButton(
+                                TextButton(
                                     onPressed: () {
                                       subPageIdx.value = 0;
                                     },
                                     child: const Text('视频')),
-                                ElevatedButton(
+                                TextButton(
                                     onPressed: () {
                                       subPageIdx.value = 1;
                                     },
                                     child: const Text('聊天')),
                               ],
                             ),
-                            SizedBox(
-                              width: context.width * 0.3,
-                              height: context.height * 0.65,
+                            Expanded(
+                              // width: context.width * 0.3,
+                              // height: context.height * 0.65,
                               child: Obx(
                                 () => subPageIdx.value == 0
                                     ? ListView.builder(
@@ -205,7 +185,7 @@ class RoomPage extends StatelessWidget {
                             ),
                             Obx(
                               () => Text(
-                                  '实时在线人数：${(controller.users.length + 1).toString()}'),
+                                  '实时在线人数：${controller.users.length}'),
                             ),
                           ],
                         )),
@@ -218,8 +198,8 @@ class RoomPage extends StatelessWidget {
         );
   }
 
-  final FocusNode _roomIDFocusNode = FocusNode();
-  final TextEditingController _roomIdTextController =
+  final FocusNode _chatFocusNode = FocusNode();
+  final TextEditingController _chatTextController =
       TextEditingController(text: '');
   final Provider provider = Provider();
 
@@ -227,11 +207,8 @@ class RoomPage extends StatelessWidget {
     return Column(
       children: [
         Obx(
-          () => SizedBox(
-            height: context.height * 0.35,
-            // child: ListView(
-            //   children: [Text('1')],
-            // ),
+          () => Expanded(
+            // height: context.height * 0.35,
             child: ListView.builder(
                 itemCount: controller.chatList.length,
                 itemBuilder: (ctx, idx) {
@@ -240,21 +217,30 @@ class RoomPage extends StatelessWidget {
                 }),
           ),
         ),
-        TextField(
-          focusNode: _roomIDFocusNode,
-          controller: _roomIdTextController,
-          decoration: const InputDecoration(
-              labelText: '发出一句聊天吧',
-              floatingLabelStyle: TextStyle(fontSize: 14),
-              labelStyle: TextStyle(fontSize: 12)),
-        ),
         ElevatedButton(
             onPressed: () {
-              provider
-                  .sendChat(MemoryStorage.rid, _roomIdTextController.text)
-                  .then((value) {
-                _roomIdTextController.text = '';
-              });
+              Get.defaultDialog(
+                onConfirm: () {
+                  provider
+                      .sendChat(MemoryStorage.rid, _chatTextController.text)
+                      .then((value) {
+                    _chatTextController.text = '';
+                  });
+                  logger.d('发出聊天：${_chatTextController.text}');
+                  Get.back();
+                },
+                onCancel: () {
+                  _chatTextController.text = '';
+                },
+                title: '发出一句聊天吧',
+                content: TextField(
+                  focusNode: _chatFocusNode,
+                  controller: _chatTextController,
+                  decoration: const InputDecoration(
+                      floatingLabelStyle: TextStyle(fontSize: 14),
+                      labelStyle: TextStyle(fontSize: 12)),
+                ),
+              );
             },
             child: const Text('发出聊天')),
       ],
@@ -288,23 +274,26 @@ class RoomPage extends StatelessWidget {
     return Center(
       child: Row(
         children: [
-          SizedBox(width: 0.2 * context.width, child: Obx(() => ListView.builder(
-              itemCount: controller.latestChatList.length,
-              itemBuilder: (ctx, idx) {
-                var record = controller.latestChatList[idx];
-                return Text('${record.uid}: ${record.content}');
-              })),),
+          Expanded(
+
+            child: Obx(() => ListView.builder(
+                itemCount: controller.latestChatList.length,
+                itemBuilder: (ctx, idx) {
+                  var record = controller.latestChatList[idx];
+                  return Text('${record.uid}: ${record.content}');
+                })),
+          ),
           Obx(() => SizedBox(
               width: context.width * 0.7,
               height: context.height,
               child: controller._buildVideoPlayerView())),
-          ElevatedButton(
+          TextButton(
               onPressed: () {
                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                     overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
                 pageIdx.value = 0;
               },
-              child: const Text('退出')),
+              child: const Text('退出全屏')),
         ],
       ),
     );
@@ -365,9 +354,11 @@ class _RoomController extends GetxController {
       });
     });
 
-    latestChatListTimer = Timer.periodic(const Duration(seconds: 10), (thisTimer) {
-      // latestChatList.removeWhere((element) => element.time < DateTime.now().millisecondsSinceEpoch - 5000);
-      latestChatList.clear();
+    latestChatListTimer =
+        Timer.periodic(const Duration(seconds: 3), (thisTimer) {
+      // 10s后消失
+      latestChatList.removeWhere((element) =>
+          element.time < DateTime.now().millisecondsSinceEpoch - 10000);
     });
   }
 
@@ -465,15 +456,15 @@ class _RoomController extends GetxController {
     _localRenderContext = RTCViewContext.localContext(uid: uid).obs;
 
     /// 设置摄像头
-    _cameraIdx.value = localStorage.read(C.cameraIdx);
+    _cameraIdx.value = MemoryStorage.cameraIdx;
     _refreshCamera();
 
     /// 开启本地视频采集
-    _openVideo.value = localStorage.read(C.openVideo);
+    _openVideo.value = MemoryStorage.openVideo;
     _refreshLocalVideo();
 
     /// 开启本地音频采集
-    _openAudio.value = localStorage.read(C.openAudio);
+    _openAudio.value = MemoryStorage.openAudio;
     _refreshLocalAudio();
 
     /// 创建房间
@@ -490,6 +481,8 @@ class _RoomController extends GetxController {
         isAutoSubscribeVideo: true);
     _rtcRoom?.joinRoom(
         token: MemoryStorage.token, userInfo: userInfo, roomConfig: roomConfig);
+
+    users.add(_localRenderContext.value);
   }
 
   VideoPlayerController? _videoPlayerController;
@@ -508,7 +501,7 @@ class _RoomController extends GetxController {
 
     if (!init.value) {
       _videoPlayerController?.initialize().then((_) {
-        logger.d('init 1.mp4');
+        logger.d('初始化了视频 ${_videoPlayerController?.dataSource}');
         init.value = true;
         // 确保在初始化视频后显示第一帧，直至在按下播放按钮。
       });
@@ -533,29 +526,26 @@ class _RoomController extends GetxController {
     }
   }
 
-  Widget _buildLocalRenderView() {
-    // return Container(height: C.bigHeight,
-    //   width: C.bigWidth,color: Color.fromARGB(100, 100, 100, 100),);
-
-    logger.d('_buildLocalRenderView: ${_localRenderContext.value != null}');
-    if (_localRenderContext.value != null) {
-      return SizedBox(
-          height: C.bigHeight,
-          width: C.bigWidth,
-          child: UserLiveView(viewContext: _localRenderContext.value!));
-    } else {
-      return const Text('null local !!');
-    }
-  }
+  // Widget _buildLocalRenderView() {
+  //   // return Container(height: C.bigHeight,
+  //   //   width: C.bigWidth,color: Color.fromARGB(100, 100, 100, 100),);
+  //
+  //   logger.d('_buildLocalRenderView: ${_localRenderContext.value != null}');
+  //   if (_localRenderContext.value != null) {
+  //     return SizedBox(
+  //         height: C.bigHeight,
+  //         width: C.bigWidth,
+  //         child: UserLiveView(viewContext: _localRenderContext.value!));
+  //   } else {
+  //     return const Text('null local !!');
+  //   }
+  // }
 
   Widget _buildRemoteRenderView(int idx) {
-    // return Container(height: C.bigHeight,
-    //   width: C.bigWidth,color: Color.fromARGB(200, 200, 200, 200),);
-
     logger.d('_buildRemoteRenderView [$idx]: ${users[idx] != null}');
     return SizedBox(
-        height: C.bigHeight,
-        width: C.bigWidth,
+        height: 180,
+        // width: 250,
         child: UserLiveView(viewContext: users[idx]!));
   }
 

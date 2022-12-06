@@ -44,6 +44,7 @@ dependencies:
   camera:
   auto_orientation: ^2.2.1
   video_player:
+  image_picker: ^0.8.6
 
 
 dev_dependencies:
@@ -95,3 +96,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - images/head.jpeg

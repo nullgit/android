@@ -2,7 +2,6 @@ package com.yunzen.wct.controller
 
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
 
 fun Any.p() = run { println(this) }
 
@@ -18,8 +17,8 @@ class TestController {
 
 }
 
-fun main(args: Array<String>) {
-    var obj : String? = "1"
-    obj = null;
-    (obj ?: "123").p()
-}
+// fun main(args: Array<String>) {
+//     var obj: String? = "1"
+//     obj = null;
+//     (obj ?: "123").p()
+// }

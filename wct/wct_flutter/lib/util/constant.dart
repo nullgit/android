@@ -1,5 +1,5 @@
 class C {
-  static const String server = 'http://192.168.43.35:10000';
+  static const String server = 'http://192.168.1.37:10000';
   static const String respData = 'respData';
   static const String id = 'id';
   static const String uid = 'uid';
@@ -13,13 +13,6 @@ class C {
   static const String openVideo = 'openVideo';
   static const String openAudio = 'openAudio';
   static const String cameraIdx = 'cameraIdx';
+  static const String headImage = 'headImage';
 
-  static const double smallHeight = 200.0;
-  static const double smallWidth = 300.0;
-
-  static const double bigHeight = 200.0;
-  static const double bigWidth = 300.0;
-
-  static const double dotHeight = 1.0;
-  static const double dotWidth = 1.0;
 }

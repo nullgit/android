@@ -1,12 +1,9 @@
 import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:logger/logger.dart';
 
 import 'constant.dart';
 
-
 class Util {
-  // static final logger = Logger();
   static final localStorage = GetStorage();
 
   static getRespData(Response r) {
@@ -19,5 +16,4 @@ class Util {
     }
     return localStorage.read(key);
   }
-
 }
