@@ -9,7 +9,7 @@ class MemoryStorage {
   static String roomName = '';
   static int rid = -1;
 
-  static bool openVideo = Util.getLocalData(C.openVideo, false);
-  static bool openAudio = Util.getLocalData(C.openAudio, false);
-  static int cameraIdx = Util.getLocalData(C.cameraIdx, 0);
+  static bool openVideo = Util.getLocalData(C.openVideo, false); // 默认关闭视频
+  static bool openAudio = Util.getLocalData(C.openAudio, false); // 默认关闭音频
+  static int cameraIdx = Util.getLocalData(C.cameraIdx, 0); // 默认后置摄像头
 }

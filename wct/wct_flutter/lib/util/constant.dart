@@ -1,5 +1,5 @@
 class C {
-  static const String server = 'http://192.168.1.37:10000';
+  static const String server = 'http://43.138.42.49:10000';
   static const String respData = 'respData';
   static const String id = 'id';
   static const String uid = 'uid';
