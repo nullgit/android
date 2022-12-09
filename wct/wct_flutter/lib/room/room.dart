@@ -95,8 +95,7 @@ class RoomPage extends StatelessWidget {
   SizedBox _buildRightPage(BuildContext context) {
     return SizedBox(
       width: context.width * 0.25,
-      child: Expanded(
-          child: Column(
+      child: Column(
         children: [
           _buildSwitchSidePageButton(),
           Expanded(
@@ -110,7 +109,7 @@ class RoomPage extends StatelessWidget {
             () => Text('实时在线人数：${_controller.users.length}'),
           ),
         ],
-      )),
+      ),
     );
   }
 
@@ -232,7 +231,7 @@ class RoomPage extends StatelessWidget {
   }
 
   /// 构建聊天内容列表
-  Widget _buildChatList(BuildContext context) {
+  Column _buildChatList(BuildContext context) {
     return Column(
       children: [
         Obx(
@@ -412,7 +411,8 @@ class _RoomController extends GetxController {
       Get.snackbar('error', 'errorCode: $code');
     };
 
-    _videoHandler.onAudioDeviceWarning = (String s, AudioDeviceType a, MediaDeviceWarning m) {
+    _videoHandler.onAudioDeviceWarning =
+        (String s, AudioDeviceType a, MediaDeviceWarning m) {
       logger.w('$s $a  $m');
     };
   }

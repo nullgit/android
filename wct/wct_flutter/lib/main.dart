@@ -8,6 +8,8 @@ import 'package:wct/room/room.dart';
 import './util/databus.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await GetStorage.init();
   MemoryStorage.cameras = await availableCameras();
 

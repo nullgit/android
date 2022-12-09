@@ -23,9 +23,9 @@ class HomePage extends StatelessWidget {
   final FocusNode _roomIDFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final TextEditingController _roomIdTextController =
-      TextEditingController(text: '10');
+      TextEditingController(text: '1');
   final TextEditingController _passwordTextController =
-      TextEditingController(text: '10');
+      TextEditingController(text: '1');
   final TextEditingController _nameTextController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
   final _headImageFileBytes = Uint8List(0).obs;
